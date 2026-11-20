@@ -12,19 +12,38 @@
   --accent: #38bdf8;
   --text: #f1f5f9;
   --muted: #94a3b8;
-}
-
-.fit-picture {
-  width: 250px;
+  --font-main: "IM Fell English", serif;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-main);
   background-color: var(--bg);
   color: var(--text);
   overflow: hidden;
   width: 100vw;
   height: 100vh;
+}
+
+/* Oversized Background Image Layer (120vh tall so it can move without showing black edges) */
+body::before {
+  content: "";
+  position: fixed;
+  top: -5vh;
+  left: 0;
+  width: 100vw;
+  height: 120vh; /* 20vh extra room at the bottom */
+  background-image: url("assets/img/background.png");
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  z-index: -1;
+  pointer-events: none;
+  transition: transform 0.25s cubic-bezier(0.22, 1.5, 0.36, 1);
+}
+
+/* Glides the background upward smoothly when a node is opened */
+body.is-shifted::before {
+  transform: translateY(-12vh);
 }
 
 /* HUD Header */
@@ -62,10 +81,10 @@ body {
   width: 100vw;
   height: 100vh;
   position: relative;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background: transparent;      /* Lets the body background image show through */
   cursor: grab;
   overflow: hidden;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .stage:active {
@@ -86,12 +105,14 @@ body {
   width: 100%;
   height: 100%;
   pointer-events: none;
+  z-index: 100;
 }
 
-.connections line {
-  stroke: rgba(56, 189, 248, 0.25);
-  stroke-width: 1.5;
-  stroke-dasharray: 6 6;
+.connections path {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.45);
+  stroke-width: 2;
+  stroke-linecap: round;
 }
 
 /* Clickable Nodes */
@@ -108,7 +129,18 @@ body {
   align-items: center;
   gap: 0.65rem;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
-  transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  transform: translate(-50%, -50%);
+  transition: top 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.25s ease, 
+              border-color 0.25s ease, 
+              background 0.25s ease, 
+              box-shadow 0.25s ease;
+}
+
+/* Slides the clicked button down near the bottom */
+.node.is-active {
+  top: 110% !important; /* Overrides the inline style="top: ...%" while open */
+  z-index: 25;         /* Keeps it visible above the backdrop if desired */
 }
 
 .node:hover {
@@ -139,26 +171,82 @@ body {
   font-weight: 500;
 }
 
+.node--image {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.node--image:hover {
+  background: transparent;
+  box-shadow: none;
+  transform: translate(-50%, -54%) scale(1.06); /* Keeps the hover zoom without a box */
+}
+
+.node--image img {
+  display: block;
+  width: 140px;       /* Adjust to whatever size you want */
+  height: auto;       /* Keeps original aspect ratio — zero cropping */
+  object-fit: contain;
+}
+
+.stage {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+  cursor: grab;
+  overflow: hidden;
+  /* Add smooth slide transition */
+  transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Shifts the stage slightly to the left when the drawer opens */
+.stage.is-shifted {
+  transform: translateY(-12vh);
+}
+
 /* Detail Drawer */
 .drawer {
   position: fixed;
-  top: 0;
-  right: 0;
-  width: min(440px, 92vw);
-  height: 100vh;
-  background: var(--surface);
-  border-left: 1px solid var(--border);
+  bottom: 0;
+  left: 50%;
+  top: 75%;
+  right: 50%;
+  width: 800px;
+  height: 800px;
+  background: transparent;
+  border: none;
+  padding: 0;
   z-index: 30;
-  padding: 2.5rem 2rem;
-  transform: translateX(100%);
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-  overflow-y: auto;
+
+  background-color: transparent;
+  background-image: url("assets/img/overlay.png");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  padding: 3.0rem 3.0rem 3.0rem 3.0rem;
+
+  /* Starts hidden below the bottom edge */
+  transform: translate(-50%, 100%);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .drawer.is-open {
-  transform: translateX(0);
+  /* Rises up into view */
+  transform: translate(-50%, -50%);
 }
 
+.drawer__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.6));
+}
 .drawer__close {
   position: absolute;
   top: 1.25rem;
@@ -181,22 +269,28 @@ body {
 
 .drawer__category {
   display: inline-block;
+  font-family: var(--font-main);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--accent);
   margin-bottom: 0.6rem;
+  color: #000000;
 }
 
 .drawer__title {
+  font-family: var(--font-main);
   font-size: 1.75rem;
   margin-bottom: 1rem;
+  color: #000000;
 }
 
 .drawer__summary {
   color: var(--muted);
   line-height: 1.6;
   margin-bottom: 1.25rem;
+  color: #000000;
+  font-family: var(--font-main);
 }
 
 .drawer__tags {
@@ -204,32 +298,38 @@ body {
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
+  color: #000000;
+  font-family: var(--font-main);
 }
 
 .tag {
+  font-family: var(--font-main);
   font-size: 0.78rem;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid var(--border);
   padding: 0.3rem 0.65rem;
   border-radius: 6px;
+  color: #000000;
 }
 
 .drawer__details {
   line-height: 1.65;
   font-size: 0.95rem;
-  color: #cbd5e1;
   margin-bottom: 2rem;
+  color: #000000;
+  font-family: var(--font-main);
 }
 
 .drawer__link {
   display: inline-block;
-  background: var(--accent);
-  color: #0b0e14;
+  /* background: var(--accent); */
   text-decoration: none;
+  font-family: var(--font-main);
   font-weight: 600;
   padding: 0.75rem 1.25rem;
-  border-radius: 8px;
+  /* border-radius: 8px; */
   transition: opacity 0.2s ease;
+  color: #000000;
 }
 
 .drawer__link:hover {

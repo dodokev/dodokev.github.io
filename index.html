@@ -5,55 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Interactive Portfolio Demo</title>
   <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0" rel="stylesheet">
 </head>
 <body>
   <!-- Top HUD Header -->
   <header class="hud-header">
-    <div class="brand">ALEX.DEV</div>
-    <div class="hint">Click any node or move cursor to explore • Press ESC to close</div>
+    <!-- <div class="brand">ALEX.DEV</div> -->
+    <div class="hint">Click any pinned paper to view their informations • Press ESC to close</div>
   </header>
 
   <!-- Interactive 2D Spatial Stage -->
   <main id="stage" class="stage">
     <div id="world" class="world">
       <!-- Connecting SVG Lines between nodes -->
-      <svg class="connections" viewBox="0 0 1200 800" preserveAspectRatio="none">
-        <line x1="600" y1="400" x2="320" y2="240" />
-        <line x1="600" y1="400" x2="880" y2="230" />
-        <line x1="600" y1="400" x2="340" y2="570" />
-        <line x1="600" y1="400" x2="860" y2="560" />
+      <svg id="connections" class="connections">
+        <path data-from="about" data-to="project-1" />
+        <path data-from="about" data-to="project-2" />
+        <path data-from="about" data-to="skills" />
+        <path data-from="about" data-to="contact" />
+
+        <image class="thread-pin" data-node="about" href="assets/img/pin.png" width="24" height="24" />
+        <image class="thread-pin" data-node="project-1" href="assets/img/pin.png" width="24" height="24" />
+        <image class="thread-pin" data-node="project-2" href="assets/img/pin.png" width="24" height="24" />
+        <image class="thread-pin" data-node="skills" href="assets/img/pin.png" width="24" height="24" />
+        <image class="thread-pin" data-node="contact" href="assets/img/pin.png" width="24" height="24" />
       </svg>
 
-      <!-- Center Hub Node -->
-      <img
-        class="fit-picture"
-        src="/assets/command.png"
-        alt="Paper" />
-      
-      <!-- <button class="node node--hub" data-id="about" style="left: 50%; top: 50%;">
-        <span class="node__icon">✦</span>
-        <span class="node__label">About Me</span>
-      </button> -->
+      <!-- Center Hub Node -->      
+      <button class="node node--image" data-id="about" style="left: 50%; top: 50%;">
+        <img src="assets/img/about_me.png" alt="About Me" />
+        <!-- <span class="node__label">About Me</span> -->
+      </button>
 
       <!-- Satellite Interactive Nodes -->
-      <button class="node" data-id="project-1" style="left: 26.6%; top: 30%;">
-        <span class="node__tag">01</span>
-        <span class="node__label">3D Web Engine</span>
+      <button class="node node--image" data-id="project-1" style="left: 26.6%; top: 30%;">
+        <img src="assets/img/about_me.png" alt="About Me" />
       </button>
 
-      <button class="node" data-id="project-2" style="left: 73.3%; top: 28.7%;">
-        <span class="node__tag">02</span>
-        <span class="node__label">AI Sound Lab</span>
+      <button class="node node--image" data-id="project-2" style="left: 73.3%; top: 28.7%;">
+        <img src="assets/img/about_me.png" alt="About Me" />
       </button>
 
-      <button class="node" data-id="skills" style="left: 28.3%; top: 71.2%;">
-        <span class="node__tag">03</span>
-        <span class="node__label">Tech Stack</span>
+      <button class="node node--image" id="skills" data-id="skills" style="left: 28.3%; top: 71.2%;">
+        <img src="assets/img/about_me.png" alt="About Me" />
       </button>
 
-      <button class="node" data-id="contact" style="left: 71.6%; top: 70%;">
-        <span class="node__tag">04</span>
-        <span class="node__label">Contact</span>
+      <button class="node node--image" data-id="contact" style="left: 71.6%; top: 70%;">
+        <img src="assets/img/about_me.png" alt="About Me" />
       </button>
     </div>
   </main>
